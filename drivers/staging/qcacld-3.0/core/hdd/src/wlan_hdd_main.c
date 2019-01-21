@@ -236,6 +236,8 @@ struct gwlan_loader {
 static struct kobj_attribute wlan_boot_attribute =
 	__ATTR(boot_wlan, 0220, NULL, wlan_boot_cb);
 
+static bool hdd_loaded = false;
+
 static struct attribute *attrs[] = {
 	&wlan_boot_attribute.attr,
 	NULL,
@@ -16161,6 +16163,18 @@ static int __hdd_driver_mode_change(struct hdd_context *hdd_ctx,
 	if (errno)
 		return errno;
 
+static int hdd_driver_load(void);
+static ssize_t wlan_hdd_state_ctrl_param_write(struct file *filp,
+						const char __user *user_buf,
+						size_t count,
+						loff_t *f_pos)
+{
+	char buf[3];
+	static const char wlan_off_str[] = "OFF";
+	static const char wlan_on_str[] = "ON";
+	int ret;
+	unsigned long rc;
+
 	if (!is_con_mode_valid(next_mode)) {
 		hdd_err_rl("Requested driver mode is invalid");
 		return -EINVAL;
@@ -16185,6 +16199,22 @@ static int __hdd_driver_mode_change(struct hdd_context *hdd_ctx,
 			is_mode_change_psoc_idle_shutdown = false;
 			hdd_err("Stop wlan modules failed");
 			return errno;
+
+	if (!hdd_loaded) {
+		if (hdd_driver_load()) {
+			pr_err("%s: Failed to init hdd module\n", __func__);
+			goto exit;
+		}
+	}
+
+	if (!cds_is_driver_loaded()) {
+		init_completion(&wlan_start_comp);
+		rc = wait_for_completion_timeout(&wlan_start_comp,
+				msecs_to_jiffies(HDD_WLAN_START_WAIT_TIME));
+		if (!rc) {
+			hdd_alert("Timed-out waiting in wlan_hdd_state_ctrl_param_write");
+			ret = -EINVAL;
+			return ret;
 		}
 	}
 
@@ -16534,6 +16564,23 @@ static void hdd_driver_unload(void)
 	osif_sync_deinit();
 
 	hdd_qdf_deinit();
+
+/**
+ * hdd_module_init() - Module init helper
+ *
+ * Module init helper function used by both module and static driver.
+ *
+ * Return: 0 for success, errno on failure
+ */
+static int hdd_module_init(void)
+{
+	int ret;
+
+	ret = wlan_hdd_state_ctrl_param_create();
+	if (ret)
+		pr_err("wlan_hdd_state_create:%x\n", ret);
+
+	return ret;
 }
 
 #ifndef MODULE
