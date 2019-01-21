@@ -16316,6 +16316,32 @@ static int hdd_driver_mode_change(enum QDF_GLOBAL_MODE mode)
 	if (errno)
 		goto trans_stop;
 
+ * hdd_module_init() - Module init helper
+ *
+ * Module init helper function used by both module and static driver.
+ *
+ * Return: 0 for success, errno on failure
+ */
+static int hdd_module_init(void)
+{
+	if (hdd_driver_load())
+		return -EINVAL;
+
+	return 0;
+}
+
+/**
+ * hdd_module_exit() - Exit function
+ *
+ * This is the driver exit point (invoked when module is unloaded using rmmod)
+ *
+ * Return: None
+ */
+static void __exit hdd_module_exit(void)
+{
+	hdd_driver_unload();
+}
+
 	errno = __hdd_driver_mode_change(hdd_ctx, mode);
 
 trans_stop:
