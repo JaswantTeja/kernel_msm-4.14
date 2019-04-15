@@ -3626,6 +3626,13 @@ QDF_STATUS wma_pre_assoc_req(struct bss_params *add_bss)
 
 void wma_add_bss_lfr3(tp_wma_handle wma, struct bss_params *add_bss)
 {
+	struct cdp_pdev *pdev;
+	struct cdp_vdev *vdev;
+	struct wma_vdev_start_req req;
+	void *peer = NULL;
+	struct wma_target_req *msg;
+	uint8_t vdev_id = 0, peer_id;
+
 	QDF_STATUS status;
 
 	status = wma_update_iface_params(wma, add_bss);
