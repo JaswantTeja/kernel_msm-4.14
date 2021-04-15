@@ -4623,6 +4623,7 @@ static unsigned long _search_range(struct kgsl_process_private *private,
 	return result;
 }
 
+
 static unsigned long _get_svm_area(struct kgsl_process_private *private,
 		struct kgsl_mem_entry *entry, unsigned long hint,
 		unsigned long len, unsigned long flags)
