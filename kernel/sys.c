@@ -1520,6 +1520,7 @@ int do_prlimit(struct task_struct *tsk, unsigned int resource,
 			*old_rlim = *rlim;
 		if (new_rlim)
 			*rlim = *new_rlim;
+
 	}
 	task_unlock(tsk->group_leader);
 
