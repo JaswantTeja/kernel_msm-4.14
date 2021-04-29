@@ -23,6 +23,12 @@
 #include <linux/delay.h>
 #define SWR_MAX_RETRY 5
 
+#ifdef VENDOR_EDIT
+/* Wang.kun@MM.AudioDriver.Machine.2156142, 2019/07/18, add for sound card bind */
+#include <linux/delay.h>
+
+#define WCD937X_NUM_RETRY 5
+#endif /* VENDOR_EDIT */
 struct wcd937x_slave_priv {
 	struct swr_device *swr_slave;
 };
@@ -31,6 +37,10 @@ static int wcd937x_slave_bind(struct device *dev,
 				struct device *master, void *data)
 {
 	int ret = 0;
+        #ifdef VENDOR_EDIT
+        /* Wang.kun@MM.AudioDriver.Machine.2156142, 2019/07/18, add for sound card bind */
+	int retry = WCD937X_NUM_RETRY;
+        #endif /* VENDOR_EDIT */
 	struct wcd937x_slave_priv *wcd937x_slave = NULL;
 	uint8_t devnum = 0;
 	struct swr_device *pdev = to_swr_device(dev);
@@ -67,6 +77,14 @@ static int wcd937x_slave_bind(struct device *dev,
 
 	return ret;
 }
+
+        #ifdef VENDOR_EDIT
+        /* Wang.kun@MM.AudioDriver.Machine.2156142, 2019/07/18, add for sound card bind */
+	while (swr_get_logical_dev_num(pdev, pdev->addr, &devnum) && retry--) {
+		/* Retry after 1 msec delay */
+		usleep_range(1000, 1100);
+	}
+        #endif /* VENDOR_EDIT */
 
 static void wcd937x_slave_unbind(struct device *dev,
 				struct device *master, void *data)
