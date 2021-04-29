@@ -46,6 +46,10 @@
 	qcom,dp-hpd-gpio = <&ioexp 8 0>;
 	qcom,mst-fixed-topology-ports = <1 2>;
 
+	pinctrl-names = "mdss_dp_active", "mdss_dp_sleep";
+	pinctrl-0 = <&dp_hpd_cfg_pins>;
+	pinctrl-1 = <&dp_hpd_cfg_pins>;
+
 	vdda-1p2-supply = <&pm6155_1_l11>;
 	vdda-0p9-supply = <&pm6155_1_l5>;
 	qcom,dp-aux-switch = <0>;
@@ -214,11 +218,6 @@
 			compatible = "qcom,msm-ext-disp-audio-codec-rx";
 		};
 	};
-
-	sde_dp_mst_sim: qcom,dp-mst-sim {
-		compatible = "qcom,dp-mst-sim";
-	};
-
 	qcom,rmnet-ipa {
 		status="disabled";
 	};
@@ -241,7 +240,7 @@
 	};
 };
 
-&sde_rscc {
-	status="disabled";
+&mdss_mdp {
+	connectors = <&sde_rscc &dsi_dp1 &sde_wb &sde_dp>;
 };
 

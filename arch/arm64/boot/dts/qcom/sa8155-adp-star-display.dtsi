@@ -46,6 +46,10 @@
 	qcom,mst-fixed-topology-ports = <1 2>;
 	qcom,widebus-enable;
 
+	pinctrl-names = "mdss_dp_active", "mdss_dp_sleep";
+	pinctrl-0 = <&dp_hpd_cfg_pins>;
+	pinctrl-1 = <&dp_hpd_cfg_pins>;
+
 	qcom,core-supply-entries {
 		#address-cells = <1>;
 		#size-cells = <0>;
@@ -324,6 +328,6 @@
 	};
 };
 
-&sde_rscc {
-	status="disabled";
+&mdss_mdp {
+	connectors = <&sde_rscc &dsi_dp1 &dsi_dp2 &sde_dp &sde_wb>;
 };
