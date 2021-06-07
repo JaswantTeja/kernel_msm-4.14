@@ -77,3 +77,15 @@ config NTAG_NQ
           This is for i2c connected version.
 
 source "drivers/nfc/max32560/Kconfig"
+
+config NFC_CXD224X
+        tristate "CXD224X NFC driver"
+        depends on I2C
+        select CRC_CCITT
+        default y
+        ---help---
+          Say yes if you want Sony cxd224x Near Field Communication driver.
+          This is for i2c connected version. If unsure, say N here.
+
+          To compile this driver as a module, choose m here. The module will
+          be called cxd224x-i2c.
