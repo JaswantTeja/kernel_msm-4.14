@@ -1719,6 +1719,13 @@ static int get_args(uint32_t kernel, struct smq_invoke_ctx *ctx)
 		if (rpra && lrpra && rpra[i].buf.len &&
 			ctx->overps[oix]->mstart) {
 			if (map && map->buf) {
+        /*zhongxuejian@Cam.drv add QCOM adsp patch for reslove supernight capture performance*/
+        #ifdef VENDOR_EDIT
+				dma_buf_begin_cpu_access(map->buf,
+					DMA_TO_DEVICE);
+				dma_buf_end_cpu_access(map->buf,
+					DMA_TO_DEVICE);
+        #else
 				dma_buf_begin_cpu_access(map->buf,
 					DMA_TO_DEVICE);
 				dma_buf_end_cpu_access(map->buf,
@@ -1869,6 +1876,13 @@ static void inv_args(struct smq_invoke_ctx *ctx)
 			continue;
 		}
 		if (map && map->buf) {
+        /*zhongxuejian@Cam.drv add QCOM adsp patch for reslove supernight capture performance*/
+        #ifdef VENDOR_EDIT
+			dma_buf_begin_cpu_access(map->buf,
+				DMA_FROM_DEVICE);
+			dma_buf_end_cpu_access(map->buf,
+				DMA_FROM_DEVICE);
+        #else
 			dma_buf_begin_cpu_access(map->buf,
 				DMA_FROM_DEVICE);
 			dma_buf_end_cpu_access(map->buf,
@@ -3584,6 +3598,27 @@ static int fastrpc_device_open(struct inode *inode, struct file *filp)
 	VERIFY(err, NULL != (fl = kzalloc(sizeof(*fl), GFP_KERNEL)));
 	if (err)
 		return err;
+
+	snprintf(strpid, PID_SIZE, "%d", current->pid);
+	buf_size = strlen(current->comm) + strlen("_") + strlen(strpid) + 1;
+
+	/* yanghao@PSW.Kernel.Stability kasan detect the buf_size < snprintf return size caused
+	 * the out of bounds. here just alloc the UL_SIZE 2019-01-05
+	 */
+#ifdef VENDOR_EDIT
+	if (buf_size < UL_SIZE)
+		buf_size = UL_SIZE;
+#endif /*VENDOR_EDIT*/
+
+	VERIFY(err, NULL != (fl->debug_buf = kzalloc(buf_size, GFP_KERNEL)));
+	if (err) {
+		kfree(fl);
+		return err;
+	}
+	snprintf(fl->debug_buf, UL_SIZE, "%.10s%s%d",
+			current->comm, "_", current->pid);
+	debugfs_file = debugfs_create_file(fl->debug_buf, 0644, debugfs_root,
+						fl, &debugfs_fops);
 
 	context_list_ctor(&fl->clst);
 	spin_lock_init(&fl->hlock);
