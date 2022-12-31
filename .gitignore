@@ -85,9 +85,6 @@ include/config
 include/generated
 arch/*/include/generated
 
-# AnyKernel dir
-AnyKernel/*
-
 # stgit generated dirs
 patches-*
 
@@ -111,6 +108,12 @@ ID
 *.orig
 *~
 \#*#
+
+# Kernel Building tools
+clang
+los-4.9-32
+los-4.9-64
+AnyKernel
 
 #
 # Leavings from module signing
