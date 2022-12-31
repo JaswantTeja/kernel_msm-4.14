@@ -356,6 +356,11 @@ static int enable_fw_nolock(struct npu_device *npu_dev)
 		return -EIO;
 	}
 
+	if (host_ctx->dev_shuttingdown) {
+		NPU_ERR("device is shutting down, ignore enable request\n");
+		return -EIO;
+	}
+
 	if (host_ctx->fw_state == FW_UNLOADED) {
 		ret = load_fw_nolock(npu_dev,
 			host_ctx->auto_pil_disable ? true : false);

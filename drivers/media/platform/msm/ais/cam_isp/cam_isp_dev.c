@@ -63,6 +63,7 @@ static int cam_isp_subdev_open(struct v4l2_subdev *sd,
 	mutex_lock(&g_isp_dev.isp_mutex);
 	g_isp_dev.open_cnt++;
 	mutex_unlock(&g_isp_dev.isp_mutex);
+	cam_req_mgr_rwsem_read_op(CAM_SUBDEV_UNLOCK);
 
 	cam_req_mgr_rwsem_read_op(CAM_SUBDEV_UNLOCK);
 

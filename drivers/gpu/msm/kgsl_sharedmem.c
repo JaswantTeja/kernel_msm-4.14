@@ -269,6 +269,9 @@ void kgsl_process_init_sysfs(struct kgsl_device *device,
 	unsigned char name[16];
 	int i;
 
+	/* Keep private valid until the sysfs enries are removed. */
+	kgsl_process_private_get(private);
+
 	snprintf(name, sizeof(name), "%d", pid_nr(private->pid));
 
 	if (kobject_init_and_add(&private->kobj, &ktype_mem_entry,

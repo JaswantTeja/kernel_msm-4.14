@@ -844,7 +844,9 @@ static int kgsl_iommu_fault_handler(struct iommu_domain *domain,
 	ptbase = KGSL_IOMMU_GET_CTX_REG_Q(ctx, TTBR0);
 	private = kgsl_iommu_get_process(ptbase);
 
-	if (private)
+	if (!kgsl_process_private_get(private))
+		private = NULL;
+	else
 		pid = pid_nr(private->pid);
 
 	if (kgsl_iommu_suppress_pagefault(addr, write, private)) {

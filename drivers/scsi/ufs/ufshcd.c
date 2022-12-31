@@ -10506,6 +10506,11 @@ disable_clks:
 		trace_ufshcd_clk_gating(dev_name(hba->dev),
 					hba->clk_gating.state);
 	}
+	/*
+	 * Disable the host irq as host controller as there won't be any
+	 * host controller transaction expected till resume.
+	 */
+	ufshcd_disable_irq(hba);
 
 	if (!hba->auto_bkops_enabled ||
 		!(req_dev_pwr_mode == UFS_ACTIVE_PWR_MODE &&
