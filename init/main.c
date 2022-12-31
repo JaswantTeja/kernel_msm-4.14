@@ -1076,6 +1076,7 @@ static int __ref kernel_init(void *unused)
 		while (vfs_stat("/dev/sedone", &stat) != 0)
 			;
 	}
+#endif
 
 #ifdef VENDOR_EDIT
         // Kun.Hu@TECH.BSP.Stability.PHOENIX_PROJECT 2019/06/11, Add for phoenix project

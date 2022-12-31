@@ -63,6 +63,7 @@ static ktime_t last_stime; /* monotonic boottime offset before last suspend */
 static ktime_t curr_stime; /* monotonic boottime offset after last suspend */
 
 static void init_node(struct wakeup_irq_node *p, int irq)
+{
 
 #ifdef VENDOR_EDIT
 //Nanwei.Deng@BSP.Power.Basic, 2018/11/19, add for analysis power coumption.
@@ -146,7 +147,7 @@ extern int modem_wakeup_src_count[MODEM_WAKEUP_SRC_NUM];
 extern char modem_wakeup_src_string[MODEM_WAKEUP_SRC_NUM][10];
 static ssize_t modem_resume_reason_stastics_show(struct kobject *kobj, struct kobj_attribute *attr,
 		char *buf)
-{
+
     int max_wakeup_src_count = 0;
     int max_wakeup_src_index = 0;
     int i, total = 0;
