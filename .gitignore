@@ -41,6 +41,7 @@
 *.xz
 Module.symvers
 modules.builtin
+out/*
 
 #
 # Top-level generic files
@@ -83,6 +84,9 @@ modules.builtin
 include/config
 include/generated
 arch/*/include/generated
+
+# AnyKernel dir
+AnyKernel/*
 
 # stgit generated dirs
 patches-*
